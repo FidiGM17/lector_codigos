@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 //Aísla el paquete de escaneo del resto de la app
-class EscanerWidget extends StatefulWidget {
+class Escaner extends StatefulWidget {
   //Se manda llamar con el texto leído (el código de barras o QR) apenas se detecta
   final void Function(String codigo) alDetectar;
 
-  const EscanerWidget({super.key, required this.alDetectar});
+  const Escaner({super.key, required this.alDetectar});
 
   @override
-  State<EscanerWidget> createState() => _EscanerWidgetState();
+  State<Escaner> createState() => _EscanerState();
 }
 
-class _EscanerWidgetState extends State<EscanerWidget> {
+class _EscanerState extends State<Escaner> {
   final MobileScannerController _controlador = MobileScannerController();
   bool _yaDetecto = false;
 
@@ -59,14 +59,14 @@ class _EscanerWidgetState extends State<EscanerWidget> {
 }
 
 //Abre la cámara en una pantalla completa y regresa el código leído
-//(o no regresa nada si el usuario cancela)
+//O no regresa nada si el usuario cancela
 Future<String?> abrirEscaner(BuildContext context) async {
   return Navigator.push<String>(
     context,
     MaterialPageRoute(
       builder: (context) => Scaffold(
         appBar: AppBar(title: const Text('Escanear código')),
-        body: EscanerWidget(
+        body: Escaner(
           alDetectar: (codigo) => Navigator.pop(context, codigo),
         ),
       ),
