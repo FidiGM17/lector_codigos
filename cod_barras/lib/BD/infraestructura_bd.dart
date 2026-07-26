@@ -14,7 +14,7 @@ class InfraestructuraBD {
 
   //Se sube este número cada vez que se cambie la estructura de las tablas
   //en una versión futura de la app
-  static const int _versionBD = 1;
+  static const int _versionBD = 2;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -46,7 +46,9 @@ class InfraestructuraBD {
         existencia REAL NOT NULL DEFAULT 0,
         unidad_medida TEXT NOT NULL DEFAULT 'pieza',
         permite_decimales INTEGER NOT NULL DEFAULT 0,
-        fecha_registro TEXT NOT NULL
+        fecha_registro TEXT NOT NULL,
+        precio_compra REAL NOT NULL DEFAULT 0,
+        precio_venta REAL NOT NULL DEFAULT 0
       )
     ''');
 
@@ -69,8 +71,12 @@ class InfraestructuraBD {
   }
 
 
+  //Aquí agregamos las columnas de precio a quien ya tenía la app instalada
   Future<void> _alActualizar(Database db, int oldVersion, int newVersion) async {
-    //Sin migraciones todavía es la primera versión de la app
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE productos ADD COLUMN precio_compra REAL NOT NULL DEFAULT 0');
+      await db.execute('ALTER TABLE productos ADD COLUMN precio_venta REAL NOT NULL DEFAULT 0');
+    }
   }
 
   Future<void> cerrar() async {

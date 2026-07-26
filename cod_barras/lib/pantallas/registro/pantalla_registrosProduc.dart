@@ -17,6 +17,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   final _codigoController = TextEditingController();
   final _nombreController = TextEditingController();
   final _cantidadController = TextEditingController();
+  final _precioCompraController = TextEditingController();
+  final _precioVentaController = TextEditingController();
 
   String? _categoriaSeleccionada;
   String _unidadMedida = 'pieza';
@@ -30,6 +32,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     _codigoController.dispose();
     _nombreController.dispose();
     _cantidadController.dispose();
+    _precioCompraController.dispose();
+    _precioVentaController.dispose();
     super.dispose();
   }
 
@@ -72,6 +76,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         existenciaInicial: double.parse(_cantidadController.text.trim()),
         unidadMedida: _unidadMedida,
         permiteDecimales: _esGranel,
+        precioCompra: double.tryParse(_precioCompraController.text.trim()) ?? 0,
+        precioVenta: double.tryParse(_precioVentaController.text.trim()) ?? 0,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -99,7 +105,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            
+
             //Código de barras / QR
             TextFormField(
               controller: _codigoController,
@@ -167,7 +173,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
             ),
             const SizedBox(height: 16),
 
-            //Cantidad total
+            //Cantidad total inicial
             TextFormField(
               controller: _cantidadController,
               decoration: const InputDecoration(
@@ -182,6 +188,64 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                 return null;
               },
             ),
+            const SizedBox(height: 16),
+
+            //Precio de compra y venta
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _precioCompraController,
+                    decoration: const InputDecoration(
+                      labelText: 'Precio de compra',
+                      prefixText: '\$ ',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (_) => setState(() {}),
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) return 'Requerido';
+                      final numero = double.tryParse(v.trim());
+                      if (numero == null || numero < 0) return 'Inválido';
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _precioVentaController,
+                    decoration: const InputDecoration(
+                      labelText: 'Precio de venta',
+                      prefixText: '\$ ',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (_) => setState(() {}),
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) return 'Requerido';
+                      final numero = double.tryParse(v.trim());
+                      if (numero == null || numero < 0) return 'Inválido';
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Builder(builder: (context) {
+              final compra = double.tryParse(_precioCompraController.text.trim());
+              final venta = double.tryParse(_precioVentaController.text.trim());
+              if (compra == null || venta == null) return const SizedBox.shrink();
+              final ganancia = venta - compra;
+              return Text(
+                'Ganancia por unidad: \$${ganancia.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: ganancia >= 0 ? Colors.green.shade700 : Colors.red,
+                ),
+              );
+            }),
             const SizedBox(height: 16),
 
             //Fecha de registro

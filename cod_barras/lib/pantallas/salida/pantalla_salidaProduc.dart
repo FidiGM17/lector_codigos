@@ -92,7 +92,8 @@ class _PantallaSalidaState extends State<PantallaSalida> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Salida de productos')),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -153,6 +154,7 @@ class _PantallaSalidaState extends State<PantallaSalida> {
               ),
             ),
         ],
+        ),
       ),
     );
   }

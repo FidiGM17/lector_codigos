@@ -13,8 +13,24 @@ class Escaner extends StatefulWidget {
 }
 
 class _EscanerState extends State<Escaner> {
-  final MobileScannerController _controlador = MobileScannerController();
-  bool _yaDetecto = false;
+  final MobileScannerController _controlador = MobileScannerController(
+    autoStart: false, // lo iniciamos manualmente para evitar el error "ya estaba iniciada"
+  );
+  bool _yaDetecto = false; // evita disparar el callback varias veces seguidas
+
+  @override
+  void initState() {
+    super.initState();
+    _iniciarCamara();
+  }
+
+  Future<void> _iniciarCamara() async {
+    try {
+      await _controlador.start();
+    } catch (e) {
+      debugPrint('Error al iniciar la cámara: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -42,6 +58,37 @@ class _EscanerState extends State<Escaner> {
         MobileScanner(
           controller: _controlador,
           onDetect: _alCapturar,
+          errorBuilder: (context, error, child) {
+            return Container(
+              color: Colors.black,
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.no_photography, color: Colors.white, size: 48),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No se pudo abrir la cámara.\n\n'
+                      'Código: ${error.errorCode.name}\n'
+                      'Detalle: ${error.errorDetails?.message ?? "sin detalle adicional"}\n\n'
+                      'Revisa que le hayas dado permiso de cámara a la app '
+                      'en Ajustes > Apps > Truequemex > Permisos.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: _iniciarCamara,
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      label: const Text('Reintentar', style: TextStyle(color: Colors.white)),
+                      style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
 
         //Cuadrito para guiar al usuario sobre a dónde debe apuntar

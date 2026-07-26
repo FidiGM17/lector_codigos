@@ -2,13 +2,15 @@
 //Representa un producto del inventario
 class Producto {
   final int? id;
-  final String codigo;//Código de barras o propio según sea el caso
+  final String codigo;//código de barras real, o creado por el usuario
   final String nombre;
   final String categoria;
   final double existencia;
-  final String unidadMedida;//pieza, kg, litro, etc
-  final bool permiteDecimales;//El valor es TRUE para productos a granel
+  final String unidadMedida;//pieza, kg, litro, ml, etc
+  final bool permiteDecimales;//El valor TRUE aparece para productos a granel
   final String fechaRegistro;
+  final double precioCompra;//Lo que cuesta el producto comprarlo al proveedor
+  final double precioVenta;//Lo que cuesta el producto al público 
 
   Producto({
     this.id,
@@ -19,9 +21,17 @@ class Producto {
     this.unidadMedida = 'pieza',
     this.permiteDecimales = false,
     required this.fechaRegistro,
+    this.precioCompra = 0,
+    this.precioVenta = 0,
   });
 
-  //Convierte el objeto a un "map" para poder guardarlo en la BD
+  //Ganancia por artículo vendido (precio de venta - precio de compra)
+  double get gananciaUnitaria => precioVenta - precioCompra;
+
+  //Ganancia futura si es que se vendiera todo el stock actual
+  double get gananciaPotencialTotal => gananciaUnitaria * existencia;
+
+  //Convierte el objeto a un "Map" para poder guardarlo en SQLite
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -32,6 +42,8 @@ class Producto {
       'unidad_medida': unidadMedida,
       'permite_decimales': permiteDecimales ? 1 : 0,
       'fecha_registro': fechaRegistro,
+      'precio_compra': precioCompra,
+      'precio_venta': precioVenta,
     };
   }
 
@@ -46,10 +58,12 @@ class Producto {
       unidadMedida: map['unidad_medida'] as String? ?? 'pieza',
       permiteDecimales: (map['permite_decimales'] as int? ?? 0) == 1,
       fechaRegistro: map['fecha_registro'] as String,
+      precioCompra: (map['precio_compra'] as num?)?.toDouble() ?? 0,
+      precioVenta: (map['precio_venta'] as num?)?.toDouble() ?? 0,
     );
   }
 
-  //Crea una copia del producto cambiando solo los campos indicados
+  //Crea una copia del producto
   Producto copyWith({
     int? id,
     String? codigo,
@@ -59,6 +73,8 @@ class Producto {
     String? unidadMedida,
     bool? permiteDecimales,
     String? fechaRegistro,
+    double? precioCompra,
+    double? precioVenta,
   }) {
     return Producto(
       id: id ?? this.id,
@@ -69,6 +85,8 @@ class Producto {
       unidadMedida: unidadMedida ?? this.unidadMedida,
       permiteDecimales: permiteDecimales ?? this.permiteDecimales,
       fechaRegistro: fechaRegistro ?? this.fechaRegistro,
+      precioCompra: precioCompra ?? this.precioCompra,
+      precioVenta: precioVenta ?? this.precioVenta,
     );
   }
 }

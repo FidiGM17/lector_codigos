@@ -33,6 +33,8 @@ class InventarioProvider extends ChangeNotifier {
     required double existenciaInicial,
     String unidadMedida = 'pieza',
     bool permiteDecimales = false,
+    double precioCompra = 0,
+    double precioVenta = 0,
   }) async {
     final producto = Producto(
       codigo: codigo,
@@ -42,6 +44,8 @@ class InventarioProvider extends ChangeNotifier {
       unidadMedida: unidadMedida,
       permiteDecimales: permiteDecimales,
       fechaRegistro: DateTime.now().toIso8601String(),
+      precioCompra: precioCompra,
+      precioVenta: precioVenta,
     );
     final id = await _repoProducto.insertar(producto);
     return producto.copyWith(id: id);

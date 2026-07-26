@@ -27,7 +27,8 @@ class ProductoCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          '${producto.categoria}\nCódigo: ${producto.codigo}',
+          '${producto.categoria}\nCódigo: ${producto.codigo}'
+          '${producto.precioVenta > 0 ? '\nVenta: \$${producto.precioVenta.toStringAsFixed(2)} · Ganancia/u: \$${producto.gananciaUnitaria.toStringAsFixed(2)}' : ''}',
         ),
         isThreeLine: true,
         leading: CircleAvatar(

@@ -36,6 +36,9 @@ class _PantallaReportesState extends State<PantallaReportes> {
 
     final totalPiezas = productos.fold<double>(0, (suma, p) => suma + p.existencia);
     final stockBajo = productos.where((p) => p.existencia <= 3).length;
+    final gananciaPotencial = productos.fold<double>(
+      0, (suma, p) => suma + p.gananciaPotencialTotal,
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Reporte de inventario')),
@@ -80,6 +83,24 @@ class _PantallaReportesState extends State<PantallaReportes> {
           //Filtro por categoría
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Card(
+              color: Colors.teal.withOpacity(0.08),
+              child: ListTile(
+                leading: const Icon(Icons.attach_money, color: Colors.teal),
+                title: const Text('Ganancia potencial del inventario actual'),
+                subtitle: const Text('Si se vendiera toda la existencia al precio de venta registrado'),
+                trailing: Text(
+                  '\$${gananciaPotencial.toStringAsFixed(2)}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.teal),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Filtro por categoría
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: DropdownButtonFormField<String?>(
               value: _categoriaFiltro,
               decoration: const InputDecoration(
@@ -100,7 +121,7 @@ class _PantallaReportesState extends State<PantallaReportes> {
             child: inventario.cargando
                 ? const Center(child: CircularProgressIndicator())
                 : productos.isEmpty
-                    ? const Center(child: Text('No hay productos registrados.'))
+                    ? const Center(child: Text('No hay productos registrados'))
                     : ListView.builder(
                         itemCount: productos.length,
                         itemBuilder: (context, i) => ProductoCard(producto: productos[i]),

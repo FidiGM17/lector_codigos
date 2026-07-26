@@ -18,6 +18,8 @@ class _PantallaEditarProductoState extends State<PantallaEditarProducto> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _codigoController;
   late TextEditingController _nombreController;
+  late TextEditingController _precioCompraController;
+  late TextEditingController _precioVentaController;
   late String? _categoriaSeleccionada;
   bool _guardando = false;
 
@@ -26,6 +28,8 @@ class _PantallaEditarProductoState extends State<PantallaEditarProducto> {
     super.initState();
     _codigoController = TextEditingController(text: widget.producto.codigo);
     _nombreController = TextEditingController(text: widget.producto.nombre);
+    _precioCompraController = TextEditingController(text: widget.producto.precioCompra.toString());
+    _precioVentaController = TextEditingController(text: widget.producto.precioVenta.toString());
     _categoriaSeleccionada = widget.producto.categoria;
   }
 
@@ -33,6 +37,8 @@ class _PantallaEditarProductoState extends State<PantallaEditarProducto> {
   void dispose() {
     _codigoController.dispose();
     _nombreController.dispose();
+    _precioCompraController.dispose();
+    _precioVentaController.dispose();
     super.dispose();
   }
 
@@ -50,6 +56,8 @@ class _PantallaEditarProductoState extends State<PantallaEditarProducto> {
       codigo: _codigoController.text.trim(),
       nombre: _nombreController.text.trim(),
       categoria: _categoriaSeleccionada,
+      precioCompra: double.tryParse(_precioCompraController.text.trim()) ?? widget.producto.precioCompra,
+      precioVenta: double.tryParse(_precioVentaController.text.trim()) ?? widget.producto.precioVenta,
     );
 
     try {
@@ -128,9 +136,38 @@ class _PantallaEditarProductoState extends State<PantallaEditarProducto> {
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Requerido' : null,
             ),
             const SizedBox(height: 16),
+            
             CategoriaDesplegable(
               valorSeleccionado: _categoriaSeleccionada,
               onChanged: (v) => setState(() => _categoriaSeleccionada = v),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _precioCompraController,
+                    decoration: const InputDecoration(
+                      labelText: 'Precio de compra',
+                      prefixText: '\$ ',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextFormField(
+                    controller: _precioVentaController,
+                    decoration: const InputDecoration(
+                      labelText: 'Precio de venta',
+                      prefixText: '\$ ',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             ListTile(

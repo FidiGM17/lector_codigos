@@ -11,13 +11,15 @@ class MenuPrincipal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Inventario')),
+      appBar: AppBar(title: const Text('TRUEQUEMEX - Punto de venta')),
       body: GridView.count(
         padding: const EdgeInsets.all(16),
         crossAxisCount: 2,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: [
+
+          //Botón de registro de productos nuevos
           _BotonMenu(
             icono: Icons.add_box_outlined,
             texto: 'Registro de\nproductos nuevos',
@@ -25,6 +27,8 @@ class MenuPrincipal extends StatelessWidget {
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const PantallaRegistro())),
           ),
+
+          //Botón de ingreso de productos
           _BotonMenu(
             icono: Icons.arrow_downward_rounded,
             texto: 'Entrada de\nproductos',
@@ -32,6 +36,8 @@ class MenuPrincipal extends StatelessWidget {
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const PantallaEntrada())),
           ),
+
+          //Botón de salida/venta de productos
           _BotonMenu(
             icono: Icons.arrow_upward_rounded,
             texto: 'Salida de\nproductos',
@@ -39,6 +45,8 @@ class MenuPrincipal extends StatelessWidget {
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const PantallaSalida())),
           ),
+
+          //Botón del reporte de los movimientos
           _BotonMenu(
             icono: Icons.bar_chart_rounded,
             texto: 'Reporte de\ninventario',
@@ -74,7 +82,12 @@ class _BotonMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: color.withOpacity(0.1),
+      color: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: color.withOpacity(0.3), width: 1),
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -86,7 +99,7 @@ class _BotonMenu extends StatelessWidget {
             Text(
               texto,
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, color: color.withOpacity(0.9)),
+              style: TextStyle(fontWeight: FontWeight.bold, color: color),
             ),
           ],
         ),
