@@ -14,7 +14,7 @@ class InfraestructuraBD {
 
   //Se sube este número cada vez que se cambie la estructura de las tablas
   //en una versión futura de la app
-  static const int _versionBD = 2;
+  static const int _versionBD = 3;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -48,7 +48,8 @@ class InfraestructuraBD {
         permite_decimales INTEGER NOT NULL DEFAULT 0,
         fecha_registro TEXT NOT NULL,
         precio_compra REAL NOT NULL DEFAULT 0,
-        precio_venta REAL NOT NULL DEFAULT 0
+        precio_venta REAL NOT NULL DEFAULT 0,
+        presentacion REAL NOT NULL DEFAULT 0
       )
     ''');
 
@@ -76,6 +77,9 @@ class InfraestructuraBD {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE productos ADD COLUMN precio_compra REAL NOT NULL DEFAULT 0');
       await db.execute('ALTER TABLE productos ADD COLUMN precio_venta REAL NOT NULL DEFAULT 0');
+    }
+    if (oldVersion < 3) {
+      await db.execute('ALTER TABLE productos ADD COLUMN presentacion REAL NOT NULL DEFAULT 0');
     }
   }
 

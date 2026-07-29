@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cod_barras/providers/modoOsc_provider.dart';
 import 'package:cod_barras/pantallas/registro/pantalla_registrosProduc.dart';
 import 'package:cod_barras/pantallas/entrada/pantalla_entradaProduc.dart';
 import 'package:cod_barras/pantallas/salida/pantalla_salidaProduc.dart';
@@ -10,8 +12,19 @@ class MenuPrincipal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tema = context.watch<TemaProvider>();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('TRUEQUEMEX - Punto de venta')),
+      appBar: AppBar(
+        title: const Text('Inventario'),
+        actions: [
+          IconButton(
+            tooltip: tema.esOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro',
+            icon: Icon(tema.esOscuro ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
+            onPressed: () => context.read<TemaProvider>().alternar(),
+          ),
+        ],
+      ),
       body: GridView.count(
         padding: const EdgeInsets.all(16),
         crossAxisCount: 2,
@@ -82,7 +95,7 @@ class _BotonMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),

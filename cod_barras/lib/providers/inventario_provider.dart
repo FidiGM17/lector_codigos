@@ -35,6 +35,7 @@ class InventarioProvider extends ChangeNotifier {
     bool permiteDecimales = false,
     double precioCompra = 0,
     double precioVenta = 0,
+    double presentacion = 0,
   }) async {
     final producto = Producto(
       codigo: codigo,
@@ -46,7 +47,9 @@ class InventarioProvider extends ChangeNotifier {
       fechaRegistro: DateTime.now().toIso8601String(),
       precioCompra: precioCompra,
       precioVenta: precioVenta,
+      presentacion: presentacion,
     );
+    
     final id = await _repoProducto.insertar(producto);
     return producto.copyWith(id: id);
   }

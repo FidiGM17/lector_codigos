@@ -28,9 +28,11 @@ class ProductoCard extends StatelessWidget {
         ),
         subtitle: Text(
           '${producto.categoria}\nCódigo: ${producto.codigo}'
+          '${producto.presentacionTexto.isNotEmpty ? '\nPresentación: ${producto.presentacionTexto}' : ''}'
           '${producto.precioVenta > 0 ? '\nVenta: \$${producto.precioVenta.toStringAsFixed(2)} · Ganancia/u: \$${producto.gananciaUnitaria.toStringAsFixed(2)}' : ''}',
         ),
-        isThreeLine: true,
+        //isThreeLine: true,
+        
         leading: CircleAvatar(
           backgroundColor: stockBajo ? Colors.red.shade100 : Colors.green.shade100,
           child: Icon(

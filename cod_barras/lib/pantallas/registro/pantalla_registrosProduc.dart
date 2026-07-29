@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:cod_barras/providers/inventario_provider.dart';
 import 'package:cod_barras/servicios/escaner.dart';
 import 'package:cod_barras/widgets/cat_desplegable.dart';
@@ -22,10 +23,25 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
   String? _categoriaSeleccionada;
   String _unidadMedida = 'pieza';
+  double? _presentacion;
   bool _esGranel = false;
   bool _guardando = false;
 
   static const List<String> _unidades = ['pieza', 'kg', 'g', 'litro', 'ml'];
+
+  //Opciones predefinidas de presentación según la unidad de medida elegida.
+  List<double> _opcionesPresentacion() {
+    switch (_unidadMedida) {
+      case 'kg':
+      case 'litro':
+        return [1, 2, 3, 4, 5];
+      case 'g':
+      case 'ml':
+        return [100, 250, 500, 750, 1000];
+      default:
+        return [];
+    }
+  }
 
   @override
   void dispose() {
@@ -78,6 +94,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         permiteDecimales: _esGranel,
         precioCompra: double.tryParse(_precioCompraController.text.trim()) ?? 0,
         precioVenta: double.tryParse(_precioVentaController.text.trim()) ?? 0,
+        presentacion: _presentacion ?? 0,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,8 +103,15 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
+      final esCodigoDuplicado = e is DatabaseException && e.isUniqueConstraintError();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error. Es posible que el código ya exista')),
+        SnackBar(
+          content: Text(
+            esCodigoDuplicado
+                ? 'Este código de barras ya está en uso por otro producto.'
+                : 'No se pudo guardar el producto: $e',
+          ),
+        ),
       );
     } finally {
       if (mounted) setState(() => _guardando = false);
@@ -155,6 +179,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               onChanged: (v) => setState(() {
                 _esGranel = v;
                 _unidadMedida = v ? 'kg' : 'pieza';
+                _presentacion = null;
               }),
             ),
             const SizedBox(height: 8),
@@ -172,6 +197,27 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               onChanged: (v) => setState(() => _unidadMedida = v ?? 'pieza'),
             ),
             const SizedBox(height: 16),
+
+            //Presentación del producto (cuánto pesa o mide cada pieza)
+            if (_opcionesPresentacion().isNotEmpty) ...[
+              DropdownButtonFormField<double>(
+                value: _presentacion,
+                decoration: InputDecoration(
+                  labelText: 'Presentación (cuánto pesa/mide cada pieza)',
+                  border: const OutlineInputBorder(),
+                  helperText: 'Ejem: si cada bolsa es de 2 $_unidadMedida, selecciona 2',
+                ),
+                items: _opcionesPresentacion()
+                    .map((valor) => DropdownMenuItem(
+                          value: valor,
+                          child: Text('${valor.toStringAsFixed(valor % 1 == 0 ? 0 : 2)} $_unidadMedida'),
+                        ))
+                    .toList(),
+                onChanged: (v) => setState(() => _presentacion = v),
+                validator: (v) => v == null ? 'Selecciona una presentación' : null,
+              ),
+              const SizedBox(height: 16),
+            ],
 
             //Cantidad total inicial
             TextFormField(

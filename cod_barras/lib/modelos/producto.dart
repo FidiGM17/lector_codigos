@@ -11,6 +11,7 @@ class Producto {
   final String fechaRegistro;
   final double precioCompra;//Lo que cuesta el producto comprarlo al proveedor
   final double precioVenta;//Lo que cuesta el producto al público 
+  final double presentacion;//Cuánto pesa o mide cada pieza
 
   Producto({
     this.id,
@@ -23,6 +24,7 @@ class Producto {
     required this.fechaRegistro,
     this.precioCompra = 0,
     this.precioVenta = 0,
+    this.presentacion = 0,
   });
 
   //Ganancia por artículo vendido (precio de venta - precio de compra)
@@ -44,6 +46,7 @@ class Producto {
       'fecha_registro': fechaRegistro,
       'precio_compra': precioCompra,
       'precio_venta': precioVenta,
+      'presentacion': presentacion,
     };
   }
 
@@ -60,6 +63,7 @@ class Producto {
       fechaRegistro: map['fecha_registro'] as String,
       precioCompra: (map['precio_compra'] as num?)?.toDouble() ?? 0,
       precioVenta: (map['precio_venta'] as num?)?.toDouble() ?? 0,
+      presentacion: (map['presentacion'] as num?)?.toDouble() ?? 0,
     );
   }
 
@@ -75,6 +79,7 @@ class Producto {
     String? fechaRegistro,
     double? precioCompra,
     double? precioVenta,
+    double? presentacion,
   }) {
     return Producto(
       id: id ?? this.id,
@@ -87,6 +92,12 @@ class Producto {
       fechaRegistro: fechaRegistro ?? this.fechaRegistro,
       precioCompra: precioCompra ?? this.precioCompra,
       precioVenta: precioVenta ?? this.precioVenta,
+      presentacion: presentacion ?? this.presentacion,
     );
   }
+
+  //Texto de la presentación, se queda vacío si no aplica
+  String get presentacionTexto =>
+      presentacion > 0 ? '${presentacion.toStringAsFixed(presentacion % 1 == 0 ? 0 : 2)} $unidadMedida' : '';
+
 }

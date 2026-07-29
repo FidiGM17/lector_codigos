@@ -13,6 +13,8 @@ class PantallaReportes extends StatefulWidget {
 
 class _PantallaReportesState extends State<PantallaReportes> {
   String? _categoriaFiltro;
+  final TextEditingController _busquedaController = TextEditingController();
+  String _textoBusqueda = '';
 
   @override
   void initState() {
@@ -24,6 +26,12 @@ class _PantallaReportesState extends State<PantallaReportes> {
     });
   }
 
+  @override
+  void dispose() {
+    _busquedaController.dispose();
+    super.dispose();
+  }
+
   void _aplicarFiltro(String? categoria) {
     setState(() => _categoriaFiltro = categoria);
     context.read<InventarioProvider>().cargarProductos(categoria: categoria);
@@ -32,7 +40,12 @@ class _PantallaReportesState extends State<PantallaReportes> {
   @override
   Widget build(BuildContext context) {
     final inventario = context.watch<InventarioProvider>();
-    final productos = inventario.productos;
+    final productosFiltrados = _textoBusqueda.isEmpty
+        ? inventario.productos
+        : inventario.productos
+            .where((p) => p.nombre.toLowerCase().contains(_textoBusqueda.toLowerCase()))
+            .toList();
+    final productos = productosFiltrados;
 
     final totalPiezas = productos.fold<double>(0, (suma, p) => suma + p.existencia);
     final stockBajo = productos.where((p) => p.existencia <= 3).length;
@@ -44,7 +57,7 @@ class _PantallaReportesState extends State<PantallaReportes> {
       appBar: AppBar(title: const Text('Reporte de inventario')),
       body: Column(
         children: [
-
+          
           //Resumen general
           Padding(
             padding: const EdgeInsets.all(16),
@@ -79,8 +92,6 @@ class _PantallaReportesState extends State<PantallaReportes> {
               ],
             ),
           ),
-
-          //Filtro por categoría
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Card(
@@ -98,7 +109,33 @@ class _PantallaReportesState extends State<PantallaReportes> {
           ),
           const SizedBox(height: 8),
 
-          // Filtro por categoría
+          const SizedBox(height: 8),
+
+          //Búsqueda por nombre
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              controller: _busquedaController,
+              decoration: InputDecoration(
+                labelText: 'Buscar producto por nombre',
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
+                suffixIcon: _textoBusqueda.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _busquedaController.clear();
+                          setState(() => _textoBusqueda = '');
+                        },
+                      ),
+              ),
+              onChanged: (texto) => setState(() => _textoBusqueda = texto),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          //Filtro por categoría
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: DropdownButtonFormField<String?>(
@@ -121,7 +158,7 @@ class _PantallaReportesState extends State<PantallaReportes> {
             child: inventario.cargando
                 ? const Center(child: CircularProgressIndicator())
                 : productos.isEmpty
-                    ? const Center(child: Text('No hay productos registrados'))
+                    ? const Center(child: Text('No hay productos registrados.'))
                     : ListView.builder(
                         itemCount: productos.length,
                         itemBuilder: (context, i) => ProductoCard(producto: productos[i]),
