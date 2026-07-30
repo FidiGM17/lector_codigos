@@ -3,9 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:cod_barras/providers/modoOsc_provider.dart';
 import 'package:cod_barras/pantallas/registro/pantalla_registrosProduc.dart';
 import 'package:cod_barras/pantallas/entrada/pantalla_entradaProduc.dart';
-import 'package:cod_barras/pantallas/salida/pantalla_salidaProduc.dart';
+import 'package:cod_barras/pantallas/ventas/pantalla_ventas.dart';
 import 'package:cod_barras/pantallas/reportes/pantalla_reportes.dart';
 import 'package:cod_barras/pantallas/productos/pantalla_listaProduc.dart';
+import 'package:cod_barras/pantallas/negocio/pantalla_negocio.dart';
 
 class MenuPrincipal extends StatelessWidget {
   const MenuPrincipal({super.key});
@@ -50,13 +51,13 @@ class MenuPrincipal extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const PantallaEntrada())),
           ),
 
-          //Botón de salida/venta de productos
+          //Botón de ventas (antes "Salida de productos")
           _BotonMenu(
-            icono: Icons.arrow_upward_rounded,
-            texto: 'Salida de\nproductos',
+            icono: Icons.point_of_sale_outlined,
+            texto: 'Ventas',
             color: Colors.orange,
             onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const PantallaSalida())),
+                MaterialPageRoute(builder: (_) => const PantallaVentas())),
           ),
 
           //Botón del reporte de los movimientos
@@ -66,6 +67,15 @@ class MenuPrincipal extends StatelessWidget {
             color: Colors.purple,
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const PantallaReportes())),
+          ),
+
+          //Botón de personalización del negocio
+          _BotonMenu(
+            icono: Icons.storefront_outlined,
+            texto: 'Datos del\nnegocio',
+            color: Colors.teal,
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const PantallaNegocio())),
           ),
         ],
       ),

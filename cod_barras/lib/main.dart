@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'providers/inventario_provider.dart';
 import 'providers/escaner_provider.dart';
 import 'providers/modoOsc_provider.dart';
+import 'providers/negocio_provider.dart';
+import 'providers/ventas_provider.dart';
 import 'pantallas/menu/menu_prin.dart';
 
 void main() {
@@ -19,6 +21,8 @@ class AppInventario extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => InventarioProvider()),
         ChangeNotifierProvider(create: (_) => EscanerProvider()),
         ChangeNotifierProvider(create: (_) => TemaProvider()),
+        ChangeNotifierProvider(create: (_) => NegocioProvider()),
+        ChangeNotifierProvider(create: (_) => VentasProvider()),
       ],
       child: Consumer<TemaProvider>(
         builder: (context, tema, _) => MaterialApp(

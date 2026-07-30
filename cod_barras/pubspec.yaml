@@ -27,6 +27,18 @@ dependencies:
   #Mantiene el modo oscuro entre sesiones si se desea
   shared_preferences: ^2.3.2
 
+  #Para generar el PDF del ticket de venta
+  pdf: ^3.11.1
+
+  #Para mostrar la vista previa e imprimir, compartir o guardar el ticket
+  printing: ^5.13.1
+
+  #Para que el usuario suba el logo del negocio desde su galería
+  image_picker: ^1.1.2
+
+  #Para guardar una copia local del logo del negocio
+  path_provider: ^2.1.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
